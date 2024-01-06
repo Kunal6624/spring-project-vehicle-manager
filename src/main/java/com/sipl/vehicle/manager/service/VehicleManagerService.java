@@ -2,17 +2,18 @@ package com.sipl.vehicle.manager.service;
 
 import java.util.List;
 
+import com.sipl.vehicle.manager.dto.VehicleDto;
 import com.sipl.vehicle.manager.model.Vehicle;
 
 public interface VehicleManagerService {
 
-	List<Vehicle> getAllVehicle();
+	List<VehicleDto> getAllVehicle();
 
-	Vehicle getVehicleById(int Id);
+	VehicleDto getVehicleById(int Id);
 
-	Vehicle addVehicle(Vehicle theVehicle);
+	VehicleDto addVehicle(VehicleDto theVehicleDto);
 
-	Vehicle updateVehicle(Vehicle vehicle, int id);
+	VehicleDto updateVehicle(VehicleDto theVehicleDto, int id);
 
-	void deleteVehicle(int id);
+	String deleteVehicle(int id);
 }

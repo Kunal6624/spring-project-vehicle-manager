@@ -1,64 +1,69 @@
 package com.sipl.vehicle.manager.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.sipl.vehicle.manager.dao.VehicleRepository;
+import com.sipl.vehicle.manager.dto.VehicleDto;
+import com.sipl.vehicle.manager.exception.ResourceNotFoundException;
+import com.sipl.vehicle.manager.mapper.VehicleMapper;
 import com.sipl.vehicle.manager.model.Vehicle;
 
 @Service
 public class VehicleManagerSeviceImp implements VehicleManagerService {
 
+	@Autowired
 	private VehicleRepository vehicleRepository;
 
 	@Autowired
-	public VehicleManagerSeviceImp(VehicleRepository vehicleRepository) {
-		super();
-		this.vehicleRepository = vehicleRepository;
+	private VehicleMapper vehicleMapper;
+
+	@Override
+	public List<VehicleDto> getAllVehicle() {
+		List<Vehicle> vehicles = vehicleRepository.findAll();
+		System.out.println(vehicles);
+		return vehicleMapper.mapVehicleListToVehicleDtoList(vehicles);
 	}
 
 	@Override
-	public List<Vehicle> getAllVehicle() {
-		return vehicleRepository.findAll();
+	public VehicleDto addVehicle(VehicleDto theVehicleDto) {
+		Vehicle theVehicle = vehicleMapper.mapVehicleDtoToVehicle(theVehicleDto);
+		return vehicleMapper.mapVehicleToVehicleDto(vehicleRepository.save(theVehicle));
 	}
 
 	@Override
-	public Vehicle addVehicle(Vehicle theVehicle) {
-		return vehicleRepository.save(theVehicle);
+	public VehicleDto getVehicleById(int Id) {
+		Vehicle theVehicle = vehicleRepository.findById(Id)
+				.orElseThrow(() -> new ResourceNotFoundException("Vehicle", "Id", Id));
+
+		return vehicleMapper.mapVehicleToVehicleDto(theVehicle);
 	}
 
 	@Override
-	public Vehicle getVehicleById(int Id) {
-		Optional<Vehicle> theVehicle = vehicleRepository.findById(Id);
-		return theVehicle.get();
-	}
-
-	@Override
-	public Vehicle updateVehicle(Vehicle vehicle, int Id) {
+	public VehicleDto updateVehicle(VehicleDto vehicleDto, int Id) {
 
 		// Check whether the employee exist in DB
-		Vehicle existingEmployee = vehicleRepository.findById(Id).orElseThrow();
+		Vehicle existingVehicle = vehicleRepository.findById(Id).orElseThrow(() -> new ResourceNotFoundException("Vehicle", "Id", Id));
 
-		existingEmployee.setVehicleRegistrationNumber(vehicle.getVehicleRegistrationNumber());
-		existingEmployee.setOwnerName(vehicle.getOwnerName());
-		existingEmployee.setBrand(vehicle.getBrand());
-		existingEmployee.setRegistrationExpires(vehicle.getRegistrationExpires());
-		existingEmployee.setCreatedBy(vehicle.getCreatedBy());
-		existingEmployee.setCreationTime(vehicle.getCreationTime());
-		existingEmployee.setModifiedBy(vehicle.getModifiedBy());
-		existingEmployee.setModifiedTime(vehicle.getModifiedTime());
-		existingEmployee.setActive(vehicle.isActive());
+		existingVehicle.setBrand(vehicleDto.getBrand());
+		existingVehicle.setOwnerName(vehicleDto.getOwnerName());
+		existingVehicle.setVehicleRegistrationNumber(vehicleDto.getVehicleRegistrationNumber());
+		existingVehicle.setRegistrationExpires(vehicleDto.getRegistrationExpires());
+		existingVehicle.setCreatedBy(vehicleDto.getCreatedBy());
+		existingVehicle.setCreationTime(vehicleDto.getCreationTime());
+		existingVehicle.setModifiedBy(vehicleDto.getModifiedBy());
+		existingVehicle.setModifiedTime(vehicleDto.getModifiedTime());
 
-		vehicleRepository.save(existingEmployee);
-		return existingEmployee;
+		return vehicleMapper.mapVehicleToVehicleDto(vehicleRepository.save(existingVehicle));
+
 	}
 
 	@Override
-	public void deleteVehicle(int id) {
+	public String deleteVehicle(int id) {
 		vehicleRepository.deleteById(id);
+		return "Vehicle Deleted Sucessfully";
 	}
 
 }

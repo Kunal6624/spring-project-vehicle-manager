@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sipl.vehicle.manager.dto.VehicleDto;
 import com.sipl.vehicle.manager.model.Vehicle;
 import com.sipl.vehicle.manager.service.VehicleManagerService;
 
@@ -29,51 +30,37 @@ public class VehicleManagerControllerImpl implements VehicleManagerController {
 		this.vehicleManagerService = vehicleManagerService;
 	}
 
-//	@Override
-//	@GetMapping("/vehicle-list")
-//	public List<Vehicle> listVehicle() {
-//		List<Vehicle> theVehicles = vehicleManagerService.getAllVehicle();
-//		return theVehicles;
-	//}
 	
 	@Override
 	@GetMapping("/vehicle-list")
-	public ResponseEntity<List<Vehicle>> listVehicle() {
-		return new ResponseEntity<List<Vehicle>>(vehicleManagerService.getAllVehicle(), HttpStatus.OK);
+	public ResponseEntity<List<VehicleDto>> listVehicle() {
+		return new ResponseEntity<List<VehicleDto>>(vehicleManagerService.getAllVehicle(), HttpStatus.OK);
 
 	}
 
-//	@Override
-//	@PostMapping("/add-vehicle")
-//	public Vehicle createVehicle(@RequestBody Vehicle theVehicle) {
-//		Vehicle vehicleObj = vehicleManagerService.addVehicle(theVehicle);
-//		return vehicleObj;
-//	}
-//	
-
 	@Override
 	@PostMapping("/add-vehicle")
-	public ResponseEntity<Vehicle> createVehicle(@RequestBody Vehicle theVehicle) {
-		return new ResponseEntity<Vehicle>(vehicleManagerService.addVehicle(theVehicle), HttpStatus.CREATED);
+	public ResponseEntity<VehicleDto> createVehicle(@RequestBody VehicleDto theVehicleDto) {
+		return new ResponseEntity<VehicleDto>(vehicleManagerService.addVehicle(theVehicleDto), HttpStatus.CREATED);
 	}
 
 	@Override
 	@GetMapping("/get-vehicle/{id}")
-	public ResponseEntity<Vehicle> getVehicleById(@PathVariable("id") int Id) {
-		return new ResponseEntity<Vehicle>(vehicleManagerService.getVehicleById(Id), HttpStatus.OK);
+	public ResponseEntity<VehicleDto> getVehicleById(@PathVariable("id") int Id) {
+		return new ResponseEntity<VehicleDto>(vehicleManagerService.getVehicleById(Id), HttpStatus.OK);
 	}
 
 	@Override
 	@PutMapping("/update-vehicle/{id}")
-	public ResponseEntity<Vehicle> updateVehicle(@PathVariable("id") int Id, @RequestBody Vehicle theVehicle) {
-		return new ResponseEntity<Vehicle>(vehicleManagerService.updateVehicle(theVehicle, Id), HttpStatus.OK);
+	public ResponseEntity<VehicleDto> updateVehicle(@PathVariable("id") int Id, @RequestBody VehicleDto vehicleDto) {
+		return new ResponseEntity<VehicleDto>(vehicleManagerService.updateVehicle(vehicleDto, Id), HttpStatus.OK);
 	}
 
 	@Override
 	@DeleteMapping("/delete-vehicle/{id}")
 	public ResponseEntity<String> deleteVehicle(@PathVariable("id") int Id) {
-		vehicleManagerService.deleteVehicle(Id);
-		return new ResponseEntity<String>("Vehicle Deleted Successfully", HttpStatus.OK);
+		String isDeleted = vehicleManagerService.deleteVehicle(Id);
+		return new ResponseEntity<String>(isDeleted, HttpStatus.OK);
 	}
 
 }
