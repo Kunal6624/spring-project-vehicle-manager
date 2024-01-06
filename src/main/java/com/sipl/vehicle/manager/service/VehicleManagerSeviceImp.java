@@ -52,9 +52,7 @@ public class VehicleManagerSeviceImp implements VehicleManagerService {
 		existingVehicle.setVehicleRegistrationNumber(vehicleDto.getVehicleRegistrationNumber());
 		existingVehicle.setRegistrationExpires(vehicleDto.getRegistrationExpires());
 		existingVehicle.setCreatedBy(vehicleDto.getCreatedBy());
-		existingVehicle.setCreationTime(vehicleDto.getCreationTime());
 		existingVehicle.setModifiedBy(vehicleDto.getModifiedBy());
-		existingVehicle.setModifiedTime(vehicleDto.getModifiedTime());
 
 		return vehicleMapper.mapVehicleToVehicleDto(vehicleRepository.save(existingVehicle));
 
@@ -65,5 +63,6 @@ public class VehicleManagerSeviceImp implements VehicleManagerService {
 		vehicleRepository.deleteById(id);
 		return "Vehicle Deleted Sucessfully";
 	}
+
 
 }

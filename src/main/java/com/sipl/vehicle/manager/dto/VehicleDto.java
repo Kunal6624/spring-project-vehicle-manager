@@ -15,8 +15,5 @@ public class VehicleDto {
 	private LocalDateTime registrationExpires;
 	private boolean isActive;
 	private String createdBy;
-	private LocalDateTime creationTime;
 	private String modifiedBy;
-	private LocalDateTime modifiedTime;
-
 }
