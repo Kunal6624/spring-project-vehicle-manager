@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sipl.vehicle.manager.dto.VehicleDto;
+import com.sipl.vehicle.manager.exception.GlobalException;
 import com.sipl.vehicle.manager.model.Vehicle;
 import com.sipl.vehicle.manager.service.VehicleManagerService;
 
@@ -30,37 +31,55 @@ public class VehicleManagerControllerImpl implements VehicleManagerController {
 		this.vehicleManagerService = vehicleManagerService;
 	}
 
-	
 	@Override
 	@GetMapping("/vehicle-list")
-	public ResponseEntity<List<VehicleDto>> listVehicle() {
-		return new ResponseEntity<List<VehicleDto>>(vehicleManagerService.getAllVehicle(), HttpStatus.OK);
-
+	public ResponseEntity<List<VehicleDto>> listVehicle() throws GlobalException {
+		try {
+			return new ResponseEntity<List<VehicleDto>>(vehicleManagerService.getAllVehicle(), HttpStatus.OK);
+		} catch (Exception e) {
+			throw new GlobalException(e.getMessage());
+		}
 	}
 
 	@Override
 	@PostMapping("/add-vehicle")
-	public ResponseEntity<VehicleDto> createVehicle(@RequestBody VehicleDto theVehicleDto) {
-		return new ResponseEntity<VehicleDto>(vehicleManagerService.addVehicle(theVehicleDto), HttpStatus.CREATED);
+	public ResponseEntity<VehicleDto> createVehicle(@RequestBody VehicleDto theVehicleDto) throws GlobalException {
+		try {
+			return new ResponseEntity<VehicleDto>(vehicleManagerService.addVehicle(theVehicleDto), HttpStatus.CREATED);
+		} catch (Exception e) {
+			throw new GlobalException(e.getMessage());
+		}
 	}
 
 	@Override
 	@GetMapping("/get-vehicle/{id}")
-	public ResponseEntity<VehicleDto> getVehicleById(@PathVariable("id") int Id) {
-		return new ResponseEntity<VehicleDto>(vehicleManagerService.getVehicleById(Id), HttpStatus.OK);
+	public ResponseEntity<VehicleDto> getVehicleById(@PathVariable("id") int Id) throws GlobalException {
+		try {
+			return new ResponseEntity<VehicleDto>(vehicleManagerService.getVehicleById(Id), HttpStatus.OK);
+		} catch (Exception e) {
+			throw new GlobalException(e.getMessage());
+		}
 	}
 
 	@Override
 	@PutMapping("/update-vehicle/{id}")
-	public ResponseEntity<VehicleDto> updateVehicle(@PathVariable("id") int Id, @RequestBody VehicleDto vehicleDto) {
-		return new ResponseEntity<VehicleDto>(vehicleManagerService.updateVehicle(vehicleDto, Id), HttpStatus.OK);
+	public ResponseEntity<VehicleDto> updateVehicle(@PathVariable("id") int Id, @RequestBody VehicleDto vehicleDto) throws GlobalException {
+		try {
+			return new ResponseEntity<VehicleDto>(vehicleManagerService.updateVehicle(vehicleDto, Id), HttpStatus.OK);
+		} catch (Exception e) {
+			throw new GlobalException(e.getMessage());
+		}
 	}
 
 	@Override
 	@DeleteMapping("/delete-vehicle/{id}")
-	public ResponseEntity<String> deleteVehicle(@PathVariable("id") int Id) {
+	public ResponseEntity<String> deleteVehicle(@PathVariable("id") int Id) throws GlobalException {
+		try {
 		String isDeleted = vehicleManagerService.deleteVehicle(Id);
 		return new ResponseEntity<String>(isDeleted, HttpStatus.OK);
-	}
-
+		} catch (Exception e) {
+			throw new GlobalException(e.getMessage());
+		}
+		}
+	
 }

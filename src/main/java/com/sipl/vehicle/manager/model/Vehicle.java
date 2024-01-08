@@ -10,13 +10,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Data;
 
 @Entity
 @Table(name = "vehicle")
+@Data
 public class Vehicle {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private int id;
 
@@ -40,96 +42,5 @@ public class Vehicle {
 	@Column(name = "modified_time")
 	@UpdateTimestamp
 	private LocalDateTime modifiedTime;
-
-	// default constructor
-	public Vehicle() {
-
-	}
-
-	public Vehicle(String vehicleRegistrationNumber, String ownerName, String brand, LocalDateTime registrationExpires,
-			boolean isActive, String createdBy, LocalDateTime creationTime, String modifiedBy, LocalDateTime modifiedTime) {
-		super();
-		this.vehicleRegistrationNumber = vehicleRegistrationNumber;
-		this.ownerName = ownerName;
-		this.brand = brand;
-		this.registrationExpires = registrationExpires;
-		this.isActive = isActive;
-		this.createdBy = createdBy;
-		this.creationTime = creationTime;
-		this.modifiedBy = modifiedBy;
-		this.modifiedTime = modifiedTime;
-	}
-
-	public String getVehicleRegistrationNumber() {
-		return vehicleRegistrationNumber;
-	}
-
-	public void setVehicleRegistrationNumber(String vehicleRegistrationNumber) {
-		this.vehicleRegistrationNumber = vehicleRegistrationNumber;
-	}
-
-	public String getOwnerName() {
-		return ownerName;
-	}
-
-	public void setOwnerName(String ownerName) {
-		this.ownerName = ownerName;
-	}
-
-	public String getBrand() {
-		return brand;
-	}
-
-	public void setBrand(String brand) {
-		this.brand = brand;
-	}
-
-	public LocalDateTime getRegistrationExpires() {
-		return registrationExpires;
-	}
-
-	public void setRegistrationExpires(LocalDateTime registrationExpires) {
-		this.registrationExpires = registrationExpires;
-	}
-
-	public boolean isActive() {
-		return isActive;
-	}
-
-	public void setActive(boolean isActive) {
-		this.isActive = isActive;
-	}
-
-	public String getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(String createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	public LocalDateTime getCreationTime() {
-		return creationTime;
-	}
-
-	public void setCreationTime(LocalDateTime creationTime) {
-		this.creationTime = creationTime;
-	}
-
-	public String getModifiedBy() {
-		return modifiedBy;
-	}
-
-	public void setModifiedBy(String modifiedBy) {
-		this.modifiedBy = modifiedBy;
-	}
-
-	public LocalDateTime getModifiedTime() {
-		return modifiedTime;
-	}
-
-	public void setModifiedTime(LocalDateTime modifiedTime) {
-		this.modifiedTime = modifiedTime;
-	}
-
+	
 }

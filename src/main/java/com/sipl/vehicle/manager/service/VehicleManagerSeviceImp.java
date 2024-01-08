@@ -34,7 +34,7 @@ public class VehicleManagerSeviceImp implements VehicleManagerService {
 	}
 
 	@Override
-	public VehicleDto getVehicleById(int Id) {
+	public VehicleDto getVehicleById(int Id) throws Exception {
 		Vehicle theVehicle = vehicleRepository.findById(Id)
 				.orElseThrow(() -> new ResourceNotFoundException("Vehicle", "Id", Id));
 
@@ -42,7 +42,7 @@ public class VehicleManagerSeviceImp implements VehicleManagerService {
 	}
 
 	@Override
-	public VehicleDto updateVehicle(VehicleDto vehicleDto, int Id) {
+	public VehicleDto updateVehicle(VehicleDto vehicleDto, int Id) throws Exception {
 
 		// Check whether the employee exist in DB
 		Vehicle existingVehicle = vehicleRepository.findById(Id).orElseThrow(() -> new ResourceNotFoundException("Vehicle", "Id", Id));

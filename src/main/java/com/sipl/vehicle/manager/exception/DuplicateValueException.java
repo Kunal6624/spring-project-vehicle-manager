@@ -3,8 +3,8 @@ package com.sipl.vehicle.manager.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(value = HttpStatus.NOT_FOUND)
-public class ResourceNotFoundException extends Exception{
+@ResponseStatus(value = HttpStatus.NOT_ACCEPTABLE)
+public class DuplicateValueException extends Exception{
 
 	/**
 	 * 
@@ -13,17 +13,14 @@ public class ResourceNotFoundException extends Exception{
 	
 	private String resourceName;
 	private String fieldName;
-	private Object fieldValue;
 	
-	
-	public ResourceNotFoundException(String resourceName, String fieldName, Object fieldValue) {
-		super(String.format("%s not found with %s: '%s'", resourceName, fieldName, fieldValue ));
+	public DuplicateValueException(String resourceName, String fieldName) {
+		super(String.format("%s with %s already exist", resourceName, fieldName));
 		this.resourceName = resourceName;
 		this.fieldName = fieldName;
-		this.fieldValue = fieldValue;
 	}
-
-
+	
+	
 	public String getResourceName() {
 		return resourceName;
 	}
@@ -33,10 +30,4 @@ public class ResourceNotFoundException extends Exception{
 		return fieldName;
 	}
 
-
-	public Object getFieldValue() {
-		return fieldValue;
-	}
-	
-	
 }
