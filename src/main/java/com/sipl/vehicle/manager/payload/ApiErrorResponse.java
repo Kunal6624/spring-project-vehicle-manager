@@ -9,7 +9,6 @@ public class ApiErrorResponse {
     private HttpStatusCode statusCode;
     
 	public ApiErrorResponse(String message, boolean success, HttpStatusCode statusCode) {
-		super();
 		this.message = message;
 		this.success = success;
 		this.statusCode = statusCode;
