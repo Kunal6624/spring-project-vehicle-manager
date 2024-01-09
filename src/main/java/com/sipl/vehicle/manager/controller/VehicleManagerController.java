@@ -2,22 +2,19 @@ package com.sipl.vehicle.manager.controller;
 
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
-
 import com.sipl.vehicle.manager.dto.VehicleDto;
-import com.sipl.vehicle.manager.exception.GlobalException;
-import com.sipl.vehicle.manager.model.Vehicle;
+import com.sipl.vehicle.manager.payload.ApiResponse;
 
 public interface VehicleManagerController {
 
-	public ResponseEntity<List<VehicleDto>> listVehicle() throws GlobalException;
+	public ApiResponse<List<VehicleDto>> listVehicle();
 
-	public ResponseEntity<VehicleDto> createVehicle(VehicleDto vehicleDto) throws GlobalException;
+	public  ApiResponse<VehicleDto> createVehicle(VehicleDto vehicleDto);
 
-	public  ResponseEntity<VehicleDto>  getVehicleById(int Id) throws GlobalException;
+	public  ApiResponse<VehicleDto>  getVehicleById(int Id);
 
-	public ResponseEntity<VehicleDto>  updateVehicle(int Id, VehicleDto vehicleDto) throws GlobalException;
+	public ApiResponse<VehicleDto>   updateVehicle(int Id, VehicleDto vehicleDto);
 
-	public ResponseEntity<String>  deleteVehicle(int Id) throws GlobalException;
+	public ApiResponse<String>  deleteVehicle(int Id);
 
 }

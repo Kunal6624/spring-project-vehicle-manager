@@ -15,8 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sipl.vehicle.manager.dto.VehicleDto;
-import com.sipl.vehicle.manager.exception.GlobalException;
-import com.sipl.vehicle.manager.model.Vehicle;
+import com.sipl.vehicle.manager.payload.ApiResponse;
 import com.sipl.vehicle.manager.service.VehicleManagerService;
 
 @RestController
@@ -33,53 +32,33 @@ public class VehicleManagerControllerImpl implements VehicleManagerController {
 
 	@Override
 	@GetMapping("/vehicle-list")
-	public ResponseEntity<List<VehicleDto>> listVehicle() throws GlobalException {
-		try {
-			return new ResponseEntity<List<VehicleDto>>(vehicleManagerService.getAllVehicle(), HttpStatus.OK);
-		} catch (Exception e) {
-			throw new GlobalException(e.getMessage());
-		}
+	public ApiResponse<List<VehicleDto>> listVehicle(){
+			return new ApiResponse<List<VehicleDto>>("Vehicle List",true, vehicleManagerService.getAllVehicle());
+	
 	}
 
 	@Override
 	@PostMapping("/add-vehicle")
-	public ResponseEntity<VehicleDto> createVehicle(@RequestBody VehicleDto theVehicleDto) throws GlobalException {
-		try {
-			return new ResponseEntity<VehicleDto>(vehicleManagerService.addVehicle(theVehicleDto), HttpStatus.CREATED);
-		} catch (Exception e) {
-			throw new GlobalException(e.getMessage());
-		}
+	public ApiResponse<VehicleDto> createVehicle(@RequestBody VehicleDto theVehicleDto){
+			return new ApiResponse<VehicleDto>("Vehicle added sucessfully", true ,vehicleManagerService.addVehicle(theVehicleDto));
 	}
 
 	@Override
 	@GetMapping("/get-vehicle/{id}")
-	public ResponseEntity<VehicleDto> getVehicleById(@PathVariable("id") int Id) throws GlobalException {
-		try {
-			return new ResponseEntity<VehicleDto>(vehicleManagerService.getVehicleById(Id), HttpStatus.OK);
-		} catch (Exception e) {
-			throw new GlobalException(e.getMessage());
-		}
+	public ApiResponse<VehicleDto> getVehicleById(@PathVariable("id") int Id)  {
+			return new ApiResponse<VehicleDto>("Vehicle", true ,vehicleManagerService.getVehicleById(Id));
 	}
 
 	@Override
 	@PutMapping("/update-vehicle/{id}")
-	public ResponseEntity<VehicleDto> updateVehicle(@PathVariable("id") int Id, @RequestBody VehicleDto vehicleDto) throws GlobalException {
-		try {
-			return new ResponseEntity<VehicleDto>(vehicleManagerService.updateVehicle(vehicleDto, Id), HttpStatus.OK);
-		} catch (Exception e) {
-			throw new GlobalException(e.getMessage());
-		}
+	public ApiResponse<VehicleDto> updateVehicle(@PathVariable("id") int Id, @RequestBody VehicleDto vehicleDto) {
+			return new ApiResponse<VehicleDto>( "Vehicle Updated sucessfully",  true ,vehicleManagerService.updateVehicle(vehicleDto, Id));
 	}
 
 	@Override
 	@DeleteMapping("/delete-vehicle/{id}")
-	public ResponseEntity<String> deleteVehicle(@PathVariable("id") int Id) throws GlobalException {
-		try {
+	public ApiResponse<String> deleteVehicle(@PathVariable("id") int Id) {
 		String isDeleted = vehicleManagerService.deleteVehicle(Id);
-		return new ResponseEntity<String>(isDeleted, HttpStatus.OK);
-		} catch (Exception e) {
-			throw new GlobalException(e.getMessage());
-		}
-		}
-	
+		return new ApiResponse<String>(isDeleted, true, isDeleted );
+	}
 }
