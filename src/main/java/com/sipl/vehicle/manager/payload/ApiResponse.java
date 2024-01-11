@@ -1,40 +1,75 @@
 package com.sipl.vehicle.manager.payload;
 
-public class ApiResponse<T> {
-	
-	private String message;
-    private boolean success;
-    private T data;
-    
+import java.util.List;
 
-    public ApiResponse() {
- 
-    }
-    
-	public ApiResponse(String message, boolean success, T data) {
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+
+public class ApiResponse<T> {
+
+	private T data;
+	private List<T> dataList;
+	private Page<T> dataPage;
+	private String message;
+	private HttpStatus httpStatus;
+	private boolean error;
+
+	public ApiResponse(T data, List<T> dataList, Page<T> dataPage, String message, HttpStatus httpStatus, boolean error) {
 		super();
-		this.message = message;
-		this.success = success;
 		this.data = data;
-	}
-	
-	public String getMessage() {
-		return message;
-	}
-	public void setMessage(String message) {
+		this.dataList = dataList;
+		this.dataPage = dataPage;
 		this.message = message;
+		this.httpStatus = httpStatus;
+		this.error = error;
 	}
-	public boolean isSuccess() {
-		return success;
-	}
-	public void setSuccess(boolean success) {
-		this.success = success;
-	}
+
 	public T getData() {
 		return data;
 	}
+
+	public Page<T> getDataPage() {
+		return dataPage;
+	}
+
+	public void setDataPage(Page<T> dataPage) {
+		this.dataPage = dataPage;
+	}
+
 	public void setData(T data) {
 		this.data = data;
+	}
+
+	public List<T> getDataList() {
+		return dataList;
+	}
+
+	public void setDataList(List<T> dataList) {
+		this.dataList = dataList;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public HttpStatus getHttpStatus() {
+		return httpStatus;
+	}
+
+	public void setHttpStatus(HttpStatus httpStatus) {
+		this.httpStatus = httpStatus;
+	}
+
+	public boolean isError() {
+		return error;
+	}
+
+	public void setError(boolean error) {
+		this.error = error;
 	}
 
 }

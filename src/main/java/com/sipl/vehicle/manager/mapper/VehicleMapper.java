@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
+import org.springframework.data.domain.Page;
 
 import com.sipl.vehicle.manager.dto.VehicleDto;
 import com.sipl.vehicle.manager.model.Vehicle;
@@ -18,4 +19,6 @@ public interface VehicleMapper {
 	VehicleDto mapVehicleToVehicleDto(Vehicle vehicle);
 
 	List<VehicleDto> mapVehicleListToVehicleDtoList(List<Vehicle> vehicles);
+	
+	//Page<VehicleDto> mapVehiclePageableToVehicleDtoPageable(Page<Vehicle> vehiclePage);
 }
