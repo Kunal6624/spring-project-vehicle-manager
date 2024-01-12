@@ -14,5 +14,7 @@ public interface VehicleManagerController {
 	public ApiResponse<VehicleDto>   updateVehicle(int Id, VehicleDto vehicleDto);
 
 	public ApiResponse<VehicleDto>  deleteVehicle(int Id);
+	
+	public  ApiResponse<VehicleDto>  getVehicleByRestTemplate(int Id);
 
 }

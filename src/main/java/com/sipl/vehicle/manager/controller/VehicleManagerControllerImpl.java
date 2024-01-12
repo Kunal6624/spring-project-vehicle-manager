@@ -57,4 +57,10 @@ public class VehicleManagerControllerImpl implements VehicleManagerController {
 	public ApiResponse<VehicleDto> deleteVehicle(@PathVariable("id") int Id) {
 		return vehicleManagerService.deleteVehicle(Id);
 	}
+
+	@Override
+	@GetMapping("/get-vehicle-template/{id}")
+	public ApiResponse<VehicleDto> getVehicleByRestTemplate(@PathVariable("id") int Id) {
+		return  vehicleManagerService.getVehicleByRestTemplate(Id);
+	};
 }

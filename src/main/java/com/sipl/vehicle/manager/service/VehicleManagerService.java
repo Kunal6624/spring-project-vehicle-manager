@@ -14,4 +14,6 @@ public interface VehicleManagerService {
 	ApiResponse<VehicleDto> updateVehicle(VehicleDto theVehicleDto, int id);
 
 	ApiResponse<VehicleDto> deleteVehicle(int id);
+	
+	ApiResponse<VehicleDto> getVehicleByRestTemplate(int Id);
 }

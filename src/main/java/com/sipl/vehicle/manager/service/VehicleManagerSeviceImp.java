@@ -1,10 +1,17 @@
 package com.sipl.vehicle.manager.service;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.sipl.vehicle.manager.dao.VehicleRepository;
 import com.sipl.vehicle.manager.dto.VehicleDto;
@@ -22,13 +29,16 @@ public class VehicleManagerSeviceImp implements VehicleManagerService {
 	@Autowired
 	private VehicleMapper vehicleMapper;
 
+	@Autowired
+	private RestTemplate restTemplate;
+
 	@Override
 	public ApiResponse<VehicleDto> getAllVehicle(int pageNumber, int pageSize) {
 		try {
-//		Page<Vehicle> vehicles = vehicleRepository.findAll(PageRequest.of(pageNumber, pageSize));
-//		System.out.println(vehicles);
-//			Page<VehicleDto> vehicleDtoPage = vehicleMapper.mapVehiclePageableToVehicleDtoPageable(vehicles);
-			return new ApiResponse<VehicleDto>(null, null, null, "Vehicle List Page", HttpStatus.OK, false);
+			Page<Vehicle> vehicles = vehicleRepository.findAll(PageRequest.of(pageNumber, pageSize));
+			System.out.println(vehicles);
+			Page<VehicleDto> vehicleDtoPage = vehicleMapper.mapVehiclePageToVehilceDtoPage(vehicles);
+			return new ApiResponse<VehicleDto>(null, null, vehicleDtoPage, "Vehicle List Page", HttpStatus.OK, false);
 		} catch (Exception e) {
 			return new ApiResponse<VehicleDto>(null, null, null, "Internal Server Error", HttpStatus.NOT_FOUND, true);
 		}
@@ -94,6 +104,25 @@ public class VehicleManagerSeviceImp implements VehicleManagerService {
 			return new ApiResponse<VehicleDto>(null, null, null, "Vehicle Deleted successfully", HttpStatus.OK, false);
 		} catch (Exception e) {
 			return new ApiResponse<VehicleDto>(null, null, null, "Internal Server Error", HttpStatus.NOT_FOUND, true);
+		}
+	}
+
+	@Override
+	public ApiResponse<VehicleDto> getVehicleByRestTemplate(int Id) {
+		try {
+	
+			HttpHeaders headers = new HttpHeaders();
+			headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+			HttpEntity<String> entity = new HttpEntity<String>(headers);
+			Vehicle templateData = restTemplate
+					.exchange("http://localhost:8082/api/v1/vehicle/" + Id, HttpMethod.GET, entity, Vehicle.class)
+					.getBody();
+			VehicleDto vehicleDtoObj = vehicleMapper.mapVehicleToVehicleDto(templateData);
+			return new ApiResponse<VehicleDto>(vehicleDtoObj, null, null, "Rest Template data fetch successfully",
+					HttpStatus.OK, false);
+		} catch (Exception e) {
+			return new ApiResponse<VehicleDto>(null, null, null, "Internal Server Error", HttpStatus.NOT_FOUND, true);
+
 		}
 	}
 }
