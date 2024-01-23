@@ -28,7 +28,7 @@ public class Vehicle {
 	private String ownerName;
 	@Column(name = "brand")
 	private String brand;
-	@Column(name = "registration_expiry_date")
+	@Column(name = "registration_expiry_date") 
 	private LocalDateTime registrationExpires;
 	@Column(name = "active")
 	private boolean isActive;

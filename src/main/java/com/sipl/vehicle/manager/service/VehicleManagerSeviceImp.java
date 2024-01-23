@@ -1,6 +1,8 @@
 package com.sipl.vehicle.manager.service;
 
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,12 +15,26 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Font;
+import com.lowagie.text.FontFactory;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.pdf.CMYKColor;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
 import com.sipl.vehicle.manager.dao.VehicleRepository;
 import com.sipl.vehicle.manager.dto.VehicleDto;
 import com.sipl.vehicle.manager.exception.ResourceNotFoundException;
 import com.sipl.vehicle.manager.mapper.VehicleMapper;
+import com.sipl.vehicle.manager.model.ExportPdf;
 import com.sipl.vehicle.manager.model.Vehicle;
 import com.sipl.vehicle.manager.payload.ApiResponse;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @Service
 public class VehicleManagerSeviceImp implements VehicleManagerService {
@@ -32,6 +48,9 @@ public class VehicleManagerSeviceImp implements VehicleManagerService {
 	@Autowired
 	private RestTemplate restTemplate;
 
+	@Autowired
+	private HttpServletResponse response;
+
 	@Override
 	public ApiResponse<VehicleDto> getAllVehicle(int pageNumber, int pageSize) {
 		try {
@@ -40,6 +59,7 @@ public class VehicleManagerSeviceImp implements VehicleManagerService {
 			Page<VehicleDto> vehicleDtoPage = vehicleMapper.mapVehiclePageToVehilceDtoPage(vehicles);
 			return new ApiResponse<VehicleDto>(null, null, vehicleDtoPage, "Vehicle List Page", HttpStatus.OK, false);
 		} catch (Exception e) {
+			
 			return new ApiResponse<VehicleDto>(null, null, null, "Internal Server Error", HttpStatus.NOT_FOUND, true);
 		}
 	}
@@ -63,8 +83,8 @@ public class VehicleManagerSeviceImp implements VehicleManagerService {
 					.orElseThrow(() -> new ResourceNotFoundException("Vehicle", "Id", Id));
 
 			VehicleDto theVehicleDto = vehicleMapper.mapVehicleToVehicleDto(theVehicle);
-
-			return new ApiResponse<VehicleDto>(theVehicleDto, null, null, "Vehicle Data", HttpStatus.OK, false);
+           return new ApiResponse<VehicleDto>(theVehicleDto, null, null, null, null, false);
+			//return new ApiResponse<VehicleDto>(theVehicleDto, null, null, "Vehicle Data", HttpStatus.OK, false);
 		} catch (ResourceNotFoundException re) {
 			return new ApiResponse<VehicleDto>(null, null, null, re.getMessage(), HttpStatus.NOT_FOUND, true);
 		} catch (Exception e) {
@@ -110,7 +130,6 @@ public class VehicleManagerSeviceImp implements VehicleManagerService {
 	@Override
 	public ApiResponse<VehicleDto> getVehicleByRestTemplate(int Id) {
 		try {
-	
 			HttpHeaders headers = new HttpHeaders();
 			headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 			HttpEntity<String> entity = new HttpEntity<String>(headers);
@@ -123,6 +142,24 @@ public class VehicleManagerSeviceImp implements VehicleManagerService {
 		} catch (Exception e) {
 			return new ApiResponse<VehicleDto>(null, null, null, "Internal Server Error", HttpStatus.NOT_FOUND, true);
 
+		}
+	}
+
+	@Override
+	public void exportDataToPDF() {
+		try {
+			response.setContentType("application/pdf");
+			String headerkey = "Content-Disposition";
+			String headervalue = "attachment; filename=Vehicle-list" + ".pdf";
+			response.setHeader(headerkey, headervalue);
+
+			// Get List Of Vehicles
+			List<Vehicle> vehicleList = vehicleRepository.findAll();
+
+			ExportPdf pdfGenerator = new ExportPdf();
+			pdfGenerator.generatePdf(vehicleList, response);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
 		}
 	}
 }

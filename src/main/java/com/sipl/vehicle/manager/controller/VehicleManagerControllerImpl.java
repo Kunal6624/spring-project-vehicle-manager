@@ -1,5 +1,7 @@
 package com.sipl.vehicle.manager.controller;
 
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lowagie.text.DocumentException;
 import com.sipl.vehicle.manager.dto.VehicleDto;
 import com.sipl.vehicle.manager.payload.ApiResponse;
 import com.sipl.vehicle.manager.service.VehicleManagerService;
@@ -61,6 +64,15 @@ public class VehicleManagerControllerImpl implements VehicleManagerController {
 	@Override
 	@GetMapping("/get-vehicle-template/{id}")
 	public ApiResponse<VehicleDto> getVehicleByRestTemplate(@PathVariable("id") int Id) {
-		return  vehicleManagerService.getVehicleByRestTemplate(Id);
-	};
+		return vehicleManagerService.getVehicleByRestTemplate(Id);
+	}
+
+	@Override
+	@GetMapping("/vehicle/export-pdf")
+	public void exportDataToPDF() throws DocumentException, IOException {
+		vehicleManagerService.exportDataToPDF();
+	}
+
+
+
 }

@@ -16,4 +16,6 @@ public interface VehicleManagerService {
 	ApiResponse<VehicleDto> deleteVehicle(int id);
 	
 	ApiResponse<VehicleDto> getVehicleByRestTemplate(int Id);
+	
+	void exportDataToPDF();
 }
