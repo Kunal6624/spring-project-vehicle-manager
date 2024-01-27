@@ -1,6 +1,6 @@
 package com.sipl.vehicle.manager.service;
 
-import java.io.IOException;
+import java.security.Key;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,24 +15,18 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Font;
-import com.lowagie.text.FontFactory;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.pdf.CMYKColor;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
+import com.sipl.vehicle.manager.dao.UserRepository;
 import com.sipl.vehicle.manager.dao.VehicleRepository;
+import com.sipl.vehicle.manager.dto.UserDto;
 import com.sipl.vehicle.manager.dto.VehicleDto;
 import com.sipl.vehicle.manager.exception.ResourceNotFoundException;
+import com.sipl.vehicle.manager.mapper.UserMapper;
 import com.sipl.vehicle.manager.mapper.VehicleMapper;
 import com.sipl.vehicle.manager.model.ExportPdf;
+import com.sipl.vehicle.manager.model.User;
 import com.sipl.vehicle.manager.model.Vehicle;
 import com.sipl.vehicle.manager.payload.ApiResponse;
+import com.sipl.vehicle.manager.util.EncryptionUtil;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -43,7 +37,13 @@ public class VehicleManagerSeviceImp implements VehicleManagerService {
 	private VehicleRepository vehicleRepository;
 
 	@Autowired
+	private UserRepository userRepository;
+
+	@Autowired
 	private VehicleMapper vehicleMapper;
+
+	@Autowired
+	private UserMapper userMapper;
 
 	@Autowired
 	private RestTemplate restTemplate;
@@ -57,10 +57,11 @@ public class VehicleManagerSeviceImp implements VehicleManagerService {
 			Page<Vehicle> vehicles = vehicleRepository.findAll(PageRequest.of(pageNumber, pageSize));
 			System.out.println(vehicles);
 			Page<VehicleDto> vehicleDtoPage = vehicleMapper.mapVehiclePageToVehilceDtoPage(vehicles);
-			return new ApiResponse<VehicleDto>(null, null, vehicleDtoPage, "Vehicle List Page", HttpStatus.OK, false);
+			return new ApiResponse<VehicleDto>(null, null, vehicleDtoPage, null, "Vehicle List Page", HttpStatus.OK,
+					false);
 		} catch (Exception e) {
-			
-			return new ApiResponse<VehicleDto>(null, null, null, "Internal Server Error", HttpStatus.NOT_FOUND, true);
+			return new ApiResponse<VehicleDto>(null, null, null, null, "Internal Server Error", HttpStatus.NOT_FOUND,
+					true);
 		}
 	}
 
@@ -69,10 +70,11 @@ public class VehicleManagerSeviceImp implements VehicleManagerService {
 		try {
 			Vehicle theVehicle = vehicleMapper.mapVehicleDtoToVehicle(theVehicleDto);
 			VehicleDto vehicleDto = vehicleMapper.mapVehicleToVehicleDto(vehicleRepository.save(theVehicle));
-			return new ApiResponse<VehicleDto>(vehicleDto, null, null, "Vehicle added successfully", HttpStatus.OK,
-					false);
+			return new ApiResponse<VehicleDto>(vehicleDto, null, null, null, "Vehicle added successfully",
+					HttpStatus.OK, false);
 		} catch (Exception e) {
-			return new ApiResponse<VehicleDto>(null, null, null, "Internal Server Error", HttpStatus.NOT_FOUND, true);
+			return new ApiResponse<VehicleDto>(null, null, null, null, "Internal Server Error", HttpStatus.NOT_FOUND,
+					true);
 		}
 	}
 
@@ -83,12 +85,14 @@ public class VehicleManagerSeviceImp implements VehicleManagerService {
 					.orElseThrow(() -> new ResourceNotFoundException("Vehicle", "Id", Id));
 
 			VehicleDto theVehicleDto = vehicleMapper.mapVehicleToVehicleDto(theVehicle);
-           return new ApiResponse<VehicleDto>(theVehicleDto, null, null, null, null, false);
-			//return new ApiResponse<VehicleDto>(theVehicleDto, null, null, "Vehicle Data", HttpStatus.OK, false);
+			return new ApiResponse<VehicleDto>(theVehicleDto, null, null, null, null, null, false);
+			// return new ApiResponse<VehicleDto>(theVehicleDto, null, null, "Vehicle Data",
+			// HttpStatus.OK, false);
 		} catch (ResourceNotFoundException re) {
-			return new ApiResponse<VehicleDto>(null, null, null, re.getMessage(), HttpStatus.NOT_FOUND, true);
+			return new ApiResponse<VehicleDto>(null, null, null, null, re.getMessage(), HttpStatus.NOT_FOUND, true);
 		} catch (Exception e) {
-			return new ApiResponse<VehicleDto>(null, null, null, "Internal Server Error", HttpStatus.NOT_FOUND, true);
+			return new ApiResponse<VehicleDto>(null, null, null, null, "Internal Server Error", HttpStatus.NOT_FOUND,
+					true);
 		}
 	}
 
@@ -108,12 +112,13 @@ public class VehicleManagerSeviceImp implements VehicleManagerService {
 			existingVehicle.setModifiedBy(vehicleDto.getModifiedBy());
 
 			VehicleDto vehicleDtoObj = vehicleMapper.mapVehicleToVehicleDto(vehicleRepository.save(existingVehicle));
-			return new ApiResponse<VehicleDto>(vehicleDtoObj, null, null, "Vehicle Updated successfully", HttpStatus.OK,
-					false);
+			return new ApiResponse<VehicleDto>(vehicleDtoObj, null, null, null, "Vehicle Updated successfully",
+					HttpStatus.OK, false);
 		} catch (ResourceNotFoundException re) {
-			return new ApiResponse<VehicleDto>(null, null, null, re.getMessage(), HttpStatus.NOT_FOUND, true);
+			return new ApiResponse<VehicleDto>(null, null, null, null, re.getMessage(), HttpStatus.NOT_FOUND, true);
 		} catch (Exception e) {
-			return new ApiResponse<VehicleDto>(null, null, null, "Internal Server Error", HttpStatus.NOT_FOUND, true);
+			return new ApiResponse<VehicleDto>(null, null, null, null, "Internal Server Error", HttpStatus.NOT_FOUND,
+					true);
 		}
 	}
 
@@ -121,9 +126,11 @@ public class VehicleManagerSeviceImp implements VehicleManagerService {
 	public ApiResponse<VehicleDto> deleteVehicle(int id) {
 		try {
 			vehicleRepository.deleteById(id);
-			return new ApiResponse<VehicleDto>(null, null, null, "Vehicle Deleted successfully", HttpStatus.OK, false);
+			return new ApiResponse<VehicleDto>(null, null, null, null, "Vehicle Deleted successfully", HttpStatus.OK,
+					false);
 		} catch (Exception e) {
-			return new ApiResponse<VehicleDto>(null, null, null, "Internal Server Error", HttpStatus.NOT_FOUND, true);
+			return new ApiResponse<VehicleDto>(null, null, null, null, "Internal Server Error", HttpStatus.NOT_FOUND,
+					true);
 		}
 	}
 
@@ -137,10 +144,11 @@ public class VehicleManagerSeviceImp implements VehicleManagerService {
 					.exchange("http://localhost:8082/api/v1/vehicle/" + Id, HttpMethod.GET, entity, Vehicle.class)
 					.getBody();
 			VehicleDto vehicleDtoObj = vehicleMapper.mapVehicleToVehicleDto(templateData);
-			return new ApiResponse<VehicleDto>(vehicleDtoObj, null, null, "Rest Template data fetch successfully",
+			return new ApiResponse<VehicleDto>(vehicleDtoObj, null, null, null, "Rest Template data fetch successfully",
 					HttpStatus.OK, false);
 		} catch (Exception e) {
-			return new ApiResponse<VehicleDto>(null, null, null, "Internal Server Error", HttpStatus.NOT_FOUND, true);
+			return new ApiResponse<VehicleDto>(null, null, null, null, "Internal Server Error", HttpStatus.NOT_FOUND,
+					true);
 
 		}
 	}
@@ -160,6 +168,58 @@ public class VehicleManagerSeviceImp implements VehicleManagerService {
 			pdfGenerator.generatePdf(vehicleList, response);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
+		}
+	}
+
+	@Override
+	public ApiResponse<UserDto> registerUser(UserDto userDto) {
+		try {
+			User userObj = userMapper.mapUserDtoToUser(userDto);
+
+			Key secreatKey = EncryptionUtil.getKey();
+			String encodedPassword = EncryptionUtil.encryptPassword(userObj.getPassword(), secreatKey);
+			System.out.println("secreatKey   " + secreatKey);
+			System.out.println("encodedPassword   " + encodedPassword);
+			userObj.setPassword(encodedPassword);
+			UserDto userData = userMapper.mapUserToUserDto(userRepository.save(userObj));
+			return new ApiResponse<UserDto>(userData, null, null, null, "user register successfully", HttpStatus.OK,
+					false);
+		} catch (Exception e) {
+			return new ApiResponse<UserDto>(null, null, null, null, "Internal Server Error", HttpStatus.NOT_FOUND,
+					true);
+
+		}
+	}
+
+	@Override
+	public ApiResponse<UserDto> auntenticateUser(UserDto userDto) {
+		try {
+			User userObj = userMapper.mapUserDtoToUser(userDto);
+
+			// check user is exist
+			User existingUser = userRepository.findByEmail(userDto.getEmail())
+					.orElseThrow(() -> new ResourceNotFoundException("User", "Email", userDto.getEmail()));
+
+			Key secreatKey = EncryptionUtil.getKey();
+			// decrypt user password
+			String decodedPassword = EncryptionUtil.decryptPassword(existingUser.getPassword(), secreatKey);
+			System.out.println("secreatKey   " + secreatKey);
+			System.out.println("decodedPassword   " + decodedPassword);
+
+			if (decodedPassword.equals(userDto.getPassword())) {
+				return new ApiResponse<UserDto>(null, null, null, null, "user aunthenticated sucessfully",
+						HttpStatus.OK, false);
+			} else {
+				return new ApiResponse<UserDto>(null, null, null, null, "unauthorised credentials", HttpStatus.OK,
+						false);
+			}
+		} catch (ResourceNotFoundException re) {
+			return new ApiResponse<UserDto>(null, null, null, null, re.getMessage(), HttpStatus.NOT_FOUND, true);
+		} catch (Exception e) {
+			System.out.println("Exception e" + e);
+			return new ApiResponse<UserDto>(null, null, null, null, "Internal Server Error", HttpStatus.NOT_FOUND,
+					true);
+
 		}
 	}
 }

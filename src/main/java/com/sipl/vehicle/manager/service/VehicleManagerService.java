@@ -1,5 +1,6 @@
 package com.sipl.vehicle.manager.service;
 
+import com.sipl.vehicle.manager.dto.UserDto;
 import com.sipl.vehicle.manager.dto.VehicleDto;
 import com.sipl.vehicle.manager.payload.ApiResponse;
 
@@ -18,4 +19,9 @@ public interface VehicleManagerService {
 	ApiResponse<VehicleDto> getVehicleByRestTemplate(int Id);
 	
 	void exportDataToPDF();
+	
+	ApiResponse<UserDto> registerUser(UserDto userDto);
+	
+	ApiResponse<UserDto> auntenticateUser(UserDto userDto);
+	
 }

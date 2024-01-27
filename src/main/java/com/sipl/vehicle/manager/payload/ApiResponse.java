@@ -5,21 +5,28 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 
+import com.sipl.vehicle.manager.exception.ValidationException;
+
 public class ApiResponse<T> {
 
 	private T data;
 	private List<T> dataList;
 	private Page<T> dataPage;
+	private List<ValidationException> errorData;
 	private String message;
 	private HttpStatus httpStatus;
+
+	
 	private boolean error;
 
-	public ApiResponse(T data, List<T> dataList, Page<T> dataPage, String message, HttpStatus httpStatus, boolean error) {
+	public ApiResponse(T data, List<T> dataList, Page<T> dataPage, List<ValidationException> errorData, String message,
+			HttpStatus httpStatus, boolean error) {
 		super();
 		this.data = data;
 		this.dataList = dataList;
 		this.dataPage = dataPage;
 		this.message = message;
+		this.errorData = errorData;
 		this.httpStatus = httpStatus;
 		this.error = error;
 	}
@@ -72,4 +79,12 @@ public class ApiResponse<T> {
 		this.error = error;
 	}
 
+	public List<ValidationException> getErrorData() {
+		return errorData;
+	}
+
+	public void setErrorData(List<ValidationException> errorData) {
+		this.errorData = errorData;
+	}
+	
 }
